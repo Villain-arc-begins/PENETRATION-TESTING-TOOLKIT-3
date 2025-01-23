@@ -41,6 +41,7 @@ The tool should be flexible and easy to integrate into penetration testing workf
 
 The tool can demonstrate how brute-forcing and port scanning can be used to find security gaps in systems.
 Provide actionable results that can be used to improve server hardening and network security.
+
 ## Output
 ![Image](https://github.com/user-attachments/assets/aa448974-8ef7-4fe8-bbf4-86b20d8a4e8e)
 ![Image](https://github.com/user-attachments/assets/648c7027-5725-4cb2-a14a-3faee248c50f)
