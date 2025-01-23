@@ -1,0 +1,69 @@
+import requests
+import argparse
+import sys
+import socket
+
+parser = argparse.ArgumentParser(description="Directory brute-forcing and port scanning tool.")
+
+parser.add_argument('-w', '--wordlist', type=str, required=True, help="Path to the wordlist file")
+parser.add_argument('-u', '--url', type=str, required=True, help="Target URL to scan")
+parser.add_argument('-e', '--extension', type=str, required=False, help="Extension to append to each word ")
+parser.add_argument('-p', '--ports', type=str, required=False, help="Comma-separated list of ports to scan ")
+
+args = parser.parse_args()
+
+print("[+] Wordlist: ", args.wordlist)
+print("[+] URL: ", args.url)
+if args.extension:
+    print("[+] Extension: ", args.extension)
+if args.ports:
+    print("[+] Ports: ", args.ports)
+
+headers = {
+    'User-Agent': 'salman OS hackX'
+}
+
+if ('http' in args.url) or ('https' in args.url):
+    pass
+else:
+    print('Enter a URL schema (http or https)')
+    sys.exit()
+
+try:
+    file = open(args.wordlist, 'r')
+    lines = file.readlines()
+except FileNotFoundError:
+    print("Error: Wordlist file not found!")
+    sys.exit()
+
+print("\n[+] Starting Directory Brute-Forcing...")
+try:
+    for line in lines:
+        line = line.strip("\n")
+        if args.extension:
+            line += args.extension
+        r = requests.get(args.url + '/' + line, headers=headers)
+        if r.status_code != 404:
+            print(f"[FOUND] {args.url}/{line} : {r.status_code}")
+except requests.exceptions.RequestException as e:
+    print("Error occurred during directory brute-forcing:", str(e))
+
+if args.ports:
+    try:
+        hostname = args.url.replace("http://", "").replace("https://", "").split('/')[0]
+        ports = [int(port.strip()) for port in args.ports.split(',')]
+        print("\n[+] Starting Port Scan on:", hostname)
+
+        for port in ports:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(1)
+            result = sock.connect_ex((hostname, port))  
+            if result == 0:
+                print(f"[OPEN] Port {port} is open")
+            else:
+                print(f"[CLOSED] Port {port} is closed")
+            sock.close()
+    except Exception as e:
+        print("Error occurred during port scanning:", str(e))
+
+print("\n[+] Scan Complete!")
